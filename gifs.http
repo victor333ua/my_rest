@@ -1,0 +1,64 @@
+# For a quick start check out our HTTP Requests collection (Tools|HTTP Client|Open HTTP Requests Collection) or
+# paste cURL into the file and request will be converted to HTTP Request format.
+#
+# Following HTTP Request Live Templates are available:
+# * 'gtrp' and 'gtr' create a GET request with or without query parameters;
+# * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
+# * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
+
+POST {{api}}/cache/generate
+Content-Type: application/json
+
+{
+  "query": "moon"
+}
+###
+
+GET {{api}}/cache?query
+Accept: application/json
+
+###
+
+GET {{api}}/cache/gifs
+Accept: application/json
+
+###
+
+DELETE {{api}}/cache
+
+###
+
+POST {{api}}/user/john/generate
+Content-Type: application/json
+
+{
+  "query": "ball",
+  "force": false
+}
+
+###
+
+GET {{api}}/user/john/search?query=ball&force=true
+Accept: application/json
+
+###
+
+GET {{api}}/user/john/all
+Accept: application/json
+
+###
+
+DELETE {{api}}/user/john/reset?query=mad
+
+###
+
+DELETE {{api}}/user/john/clean
+
+###
+
+GET {{api}}/user/john/history
+Accept: application/json
+
+###
+
+DELETE {{api}}/user/john/history/clean
