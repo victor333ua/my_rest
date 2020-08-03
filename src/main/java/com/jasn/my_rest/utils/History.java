@@ -2,10 +2,12 @@ package com.jasn.my_rest.utils;
 
 import com.jasn.my_rest.dto.HistoryDto;
 import com.jasn.my_rest.exception.MyIoException;
+import com.jasn.my_rest.service.FileSystemService;
 import com.opencsv.*;
 import com.opencsv.bean.*;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import org.springframework.stereotype.Service;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,7 +23,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
+@Service
 public class History {
+    private FileSystemService fileSystemService;
+
+    public History(FileSystemService fileSystemService) {
+        this.fileSystemService = fileSystemService;
+    }
 
     public List<HistoryDto> getHistory(Path pathToHistoryFile) throws MyIoException {
         List<HistoryDto> list = new LinkedList<>();
@@ -54,20 +62,16 @@ public class History {
         return list;
     }
 
-    public void addRecord(Path pathToUser, String theme, String fileName) throws MyIoException {
+    public void addRecord(Path pathToUserFile) throws MyIoException {
 
-        Path path = Paths.get(pathToUser.toString(), "\\history.csv");
-        if(!Files.exists(path)) {
-            try {
-                Files.createFile(path);
-            } catch (IOException e) {
-                throw new MyIoException(e.getMessage());
-            }
-        }
+        Path pathToCsv = Paths.get(pathToUserFile.getParent().getParent().toString(), "history.csv");
+        if(!Files.exists(pathToCsv)) fileSystemService.createFile(pathToCsv.getParent(), "history.csv");
+
+        String theme = pathToUserFile.getParent().getFileName().toString();
 
         Writer writer  = null;
         try {
-            writer = new FileWriter(path.toString());
+            writer = new FileWriter(pathToCsv.toString(), true);
 
             StatefulBeanToCsv sbc = new StatefulBeanToCsvBuilder(writer)
                     .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
@@ -79,7 +83,7 @@ public class History {
             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy");
             String formattedDate = myDateObj.format(myFormatObj);
 
-            list.add(new HistoryDto(formattedDate, theme, fileName));
+            list.add(new HistoryDto(formattedDate, theme, pathToUserFile.toString()));
 
             try {
                 sbc.write(list);

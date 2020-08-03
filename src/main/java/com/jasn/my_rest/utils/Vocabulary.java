@@ -4,11 +4,13 @@ import com.jasn.my_rest.exception.GifNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.Optional;
 
 @Slf4j
+@Service
 public class Vocabulary {
     private JSONObject users = new JSONObject();
 

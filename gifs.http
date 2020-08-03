@@ -28,17 +28,17 @@ DELETE {{api}}/cache
 
 ###
 
-POST {{api}}/user/john/generate
+POST {{api}}/user/nick/generate
 Content-Type: application/json
 
 {
-  "query": "ball",
+  "query": "computer",
   "force": false
 }
 
 ###
 
-GET {{api}}/user/john/search?query=ball&force=true
+GET {{api}}/user/nick/search?query=computer&force=true
 Accept: application/json
 
 ###
@@ -56,7 +56,7 @@ DELETE {{api}}/user/john/clean
 
 ###
 
-GET {{api}}/user/john/history
+GET {{api}}/user/nick/history
 Accept: application/json
 
 ###

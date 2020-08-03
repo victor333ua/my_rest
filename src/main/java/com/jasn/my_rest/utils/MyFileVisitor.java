@@ -16,15 +16,17 @@ import java.util.List;
 public  class MyFileVisitor implements FileVisitor<Path> {
     private QueryFilesDto listOfFiles;
     private List<QueryFilesDto> cacheList = new LinkedList<>();
-    private String cache; // root directory
+    private String rootDir; // root directory
 
-    public MyFileVisitor(String cache) {
-        this.cache = cache;
+    public MyFileVisitor(String rootDir) {
+        this.rootDir = rootDir;
     }
 
     @Override
     public FileVisitResult visitFile(Path path, BasicFileAttributes fileAttributes) {
-        listOfFiles.getGifs().add(path.toString());
+        String fileName = path.toString();
+
+        if(!fileName.endsWith("csv")) listOfFiles.getGifs().add(fileName);
         return FileVisitResult.CONTINUE;
     }
 
@@ -37,28 +39,22 @@ public  class MyFileVisitor implements FileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs){
 
 // skip root directory
-        String theme = GetCurrentDirectory(dir);
-        if(!theme.equals(cache)) {
+        String theme = dir.getFileName().toString();
+        if(!theme.equals(rootDir)) {
             listOfFiles = new QueryFilesDto();
             listOfFiles.setQuery(theme);
-            log.info(theme);
         }
         return FileVisitResult.CONTINUE;
     }
 
     @Override
-    public FileVisitResult postVisitDirectory(Path path, IOException exc) {
+    public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
 
-        if(!GetCurrentDirectory(path).equals(cache)) cacheList.add(listOfFiles);
+        if(!dir.getFileName().toString().equals(rootDir)) cacheList.add(listOfFiles);
 
         return FileVisitResult.CONTINUE;
     }
 
-    private String GetCurrentDirectory(Path dir) {
-        String directory = dir.toString();
-        int index = directory.lastIndexOf("\\");
-        return directory.substring(index+1);
-    }
 
     public List<QueryFilesDto> getCacheList() {
         return this.cacheList;
